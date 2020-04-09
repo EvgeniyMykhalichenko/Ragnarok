@@ -16,7 +16,6 @@ class Router {
 			return;
 		}
 
-
 		foreach ($this->routsCollection as $route) {
 
 			if ($route->url !== $request) {
