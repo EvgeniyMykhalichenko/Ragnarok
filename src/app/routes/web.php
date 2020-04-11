@@ -1,15 +1,10 @@
 <?php
 
-require '../core/modules/Autoload.php';
+use Core\Modules\Route\Route;
 
-use app\components\Autoload;
-use core\modules\Router;
+$router = new Route();
+$router->get('test', 'IndexController@index');
+$router->get('lol/:user', 'IndexController@index');
+$router->get('user/:user/update/:id', 'IndexController@index');
 
-AutoLoad::load();
-
-$router = new Router();
-
-$router->get('/', 'IndexController', 'index')
-	->get('/test', 'IndexController', 'index')
-	->get('/user/{user}', 'IndexController', 'index')
-	->start();
+return $router;

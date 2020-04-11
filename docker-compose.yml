@@ -6,8 +6,9 @@ services:
     container_name: "nginx"
     volumes:
       - "./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf"
-      - "./src:/var/www/ragnarok"
       - "./docker/nginx/default.template.conf:/etc/nginx/conf.d/default.template"
+      - "./src:/var/www/ragnarok"
+      - "./logs/nginx/:/var/log/nginx"
     ports:
       - "8000:80"
       - "3000:443"
@@ -17,9 +18,11 @@ services:
     restart: always
     depends_on:
       - php-fpm
+      - mysqldb
 
   php-fpm:
     image: php:fpm-alpine
+    container_name: 'php-fpm'
     volumes:
     - "./src:/var/www/ragnarok"
     env_file:
@@ -38,5 +41,9 @@ services:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    volumes:
+      - "./docker/mysql/data:/var/lib/mysql"
+      - "./logs/mysql/:/var/log/mysql"
+      - "./docker/mysql/conf.d:/etc/mysql/conf.d"
     ports:
       - "8989:3306"

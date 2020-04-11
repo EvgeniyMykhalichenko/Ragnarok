@@ -1,6 +1,6 @@
 <?php
 
-namespace app\components;
+namespace Core\Modules;
 
 /**
  * Class AutoLoader
@@ -24,7 +24,7 @@ class Autoload
 	 */
 	private static function findClass($className)
 	{
-		$fileName = "./" . str_replace("\\", '/', $className) . ".php";
+		$fileName = ucwords("../../" . str_replace("\\", '/', $className) . ".php");
 
 		try{
 			if (file_exists($fileName)) {

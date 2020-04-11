@@ -1,6 +1,6 @@
 <?php
 
-namespace core\utils;
+namespace Core\Utils;
 
 class Http {
 	// You can set the address when creating the Request object, or using the

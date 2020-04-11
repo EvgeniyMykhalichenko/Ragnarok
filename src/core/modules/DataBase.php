@@ -4,6 +4,6 @@
 namespace Core\Modules;
 
 
-class Controller extends Core {
+class DataBase {
 
 }
