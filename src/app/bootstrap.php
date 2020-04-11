@@ -2,8 +2,8 @@
 
 namespace App;
 
-use Core\Modules\Route\Route;
 use Core\Modules\Route\Router;
+use Core\Modules\Route\RouteStorage;
 
 class Bootstrap
 {
@@ -12,7 +12,7 @@ class Bootstrap
 	public function __construct()
 	{
 		$this->loadHelpers();
-		$this->loadRout();
+		$this->loadRouter();
 	}
 
 	public function loadHelpers()
@@ -20,9 +20,8 @@ class Bootstrap
 		require_once '../../core/helpers/helpers.php';
 	}
 
-	public function loadRout()
+	public function loadRouter()
 	{
-		$routs = include(self::APP_DIR . "routes/web.php");
-		new Router($routs->collection);
+		new Router(new RouteStorage());
 	}
 }

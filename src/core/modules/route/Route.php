@@ -27,16 +27,42 @@ class Route
 		return $this;
 	}
 
+	public function post(string $resource, string $action): Route
+	{
+		$route = new self();
+		$route->url = trim($resource, '/');
+		$route->action = $action;
+
+		$this->collection[] = $route;
+
+		return $this;
+	}
+
+	public function put(string $resource, string $action): Route
+	{
+		$route = new self();
+		$route->url = trim($resource, '/');
+		$route->action = $action;
+
+		$this->collection[] = $route;
+
+		return $this;
+	}
+
+	public function delete(string $resource, string $action): Route
+	{
+		$route = new self();
+		$route->url = trim($resource, '/');
+		$route->action = $action;
+
+		$this->collection[] = $route;
+
+		return $this;
+	}
+
 	public function getUrl(): string
 	{
 		return $this->url;
-	}
-
-
-	public function setFilters(array $filters, $parametersByName = false)
-	{
-		$this->filters          = $filters;
-		$this->parametersByName = $parametersByName;
 	}
 
 	public function getRegex()
@@ -65,16 +91,15 @@ class Route
 		$this->parameters = $parameters;
 	}
 
-	public function dispatch(): void
+	public function dispatch()
 	{
-		var_dump($this->getParameters());
 		list($controller, $method) = explode($this->actionDelimiter, $this->action);
 
 		$controllerPath = "App\Controllers\\" . $controller;
 
 		$instance = new $controllerPath;
 
-		call_user_func_array(array($instance, $method), [new Request()]);
+		return $instance->$method(new Request());
 	}
 
 }
