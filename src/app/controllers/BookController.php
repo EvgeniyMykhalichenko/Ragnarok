@@ -4,13 +4,23 @@
 namespace App\Controllers;
 
 
+use App\Models\Book;
 use Core\Modules\Request;
 
 class BookController {
 
 	public function index()
 	{
-		return response()->json(['status' => 'success']);
+		$books = new Book();
+		$books->setDb([
+			'type' => 'pdomysql',
+			'hostname' => 'mysql',
+			'database' => 'test',
+			'username' => 'root',
+			'password' => 'root'
+		]);
+		$books->insert(['recipe_id' => 12, 'recipe_name' => 'lol']);
+		return response()->json(['books' => $books]);
 	}
 
 	public function show($bookUUID)

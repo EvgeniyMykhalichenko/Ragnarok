@@ -2,8 +2,8 @@
 
 namespace App\Controllers;
 
-use core\modules\Controller;
-use core\modules\Request;
+use Core\Modules\Controller;
+use Core\Modules\Request;
 
 class IndexController extends Controller {
 

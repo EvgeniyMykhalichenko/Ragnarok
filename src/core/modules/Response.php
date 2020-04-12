@@ -25,8 +25,8 @@ class Response {
 		header('Status: '.$status[$code]);
 		// return the encoded json
 		return json_encode(array(
-			'status' => $code < 300, // success or not?
-			'message' => $message
+			'status' => $code < 300 ? 'success' : 'error', // success or not?
+			'data' => $message
 		));
 	}
 }

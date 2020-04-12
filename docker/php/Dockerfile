@@ -1,6 +1,5 @@
-# php-fpm
-FROM php:fpm-alpine
+FROM php:7.4-fpm
 
-CMD ["php-fpm"]
+RUN docker-php-ext-install pdo_mysql
 
-EXPOSE 9000
+WORKDIR "/src"
