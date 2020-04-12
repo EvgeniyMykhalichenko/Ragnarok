@@ -582,7 +582,123 @@ class Sparrow {
 	 * @throws Exception For connection error
 	 */
 	public function setDb($db) {
-		$this->db = new \PDO('mysql:host=mysql;dbname=test', 'root', 'root');
+		$this->db = null;
+
+		// Connection string
+		if (is_string($db)) {
+			$this->setDb($this->parseConnection($db));
+		}
+		// Connection information
+		else if (is_array($db)) {
+			switch ($db['type']) {
+				case 'mysqli':
+					$this->db = new mysqli(
+						$db['hostname'],
+						$db['username'],
+						$db['password'],
+						$db['database']
+					);
+
+					if ($this->db->connect_error) {
+						throw new Exception('Connection error: '.$this->db->connect_error);
+					}
+
+					break;
+
+				case 'mysql':
+					$this->db = mysql_connect(
+						$db['hostname'],
+						$db['username'],
+						$db['password']
+					);
+
+					if (!$this->db) {
+						throw new Exception('Connection error: '.mysql_error());
+					}
+
+					mysql_select_db($db['database'], $this->db);
+
+					break;
+
+				case 'pgsql':
+					$str = sprintf(
+						'host=%s dbname=%s user=%s password=%s',
+						$db['hostname'],
+						$db['database'],
+						$db['username'],
+						$db['password']
+					);
+
+					$this->db = pg_connect($str);
+
+					break;
+
+				case 'sqlite':
+					$this->db = sqlite_open($db['database'], 0666, $error);
+
+					if (!$this->db) {
+						throw new Exception('Connection error: '.$error);
+					}
+
+					break;
+
+				case 'sqlite3':
+					$this->db = new SQLite3($db['database']);
+
+					break;
+
+				case 'pdomysql':
+					$dsn = sprintf(
+						'mysql:host=%s;port=%d;dbname=%s',
+						$db['hostname'],
+						isset($db['port']) ? $db['port'] : 3306,
+						$db['database']
+					);
+
+					$this->db = new \PDO($dsn, $db['username'], $db['password']);
+					$db['type'] = 'pdo';
+
+					break;
+
+				case 'pdopgsql':
+					$dsn = sprintf(
+						'pgsql:host=%s;port=%d;dbname=%s;user=%s;password=%s',
+						$db['hostname'],
+						isset($db['port']) ? $db['port'] : 5432,
+						$db['database'],
+						$db['username'],
+						$db['password']
+					);
+
+					$this->db = new PDO($dsn);
+					$db['type'] = 'pdo';
+
+					break;
+
+				case 'pdosqlite':
+					$this->db = new \PDO('sqlite:/'.$db['database']);
+					$db['type'] = 'pdo';
+
+					break;
+			}
+
+			if ($this->db == null) {
+				throw new \Exception('Undefined database.');
+			}
+
+			$this->db_type = $db['type'];
+		}
+		// Connection object or resource
+		else {
+			$type = $this->getDbType($db);
+
+			if (!in_array($type, self::$db_types)) {
+				throw new Exception('Invalid database type.');
+			}
+
+			$this->db = $db;
+			$this->db_type = $type;
+		}
 	}
 
 	/**
@@ -630,7 +746,7 @@ class Sparrow {
 	 */
 	public function execute($key = null, $expire = 0) {
 		if (!$this->db) {
-			throw new Exception('Database is not defined.');
+			throw new \Exception('Database is not defined.');
 		}
 
 		if ($key !== null) {
@@ -807,7 +923,7 @@ class Sparrow {
 		else {
 			switch ($this->db_type) {
 				case 'pdo':
-					$data = $result->fetchAll(PDO::FETCH_ASSOC);
+					$data = $result->fetchAll(\PDO::FETCH_ASSOC);
 					$this->num_rows = sizeof($data);
 
 					break;

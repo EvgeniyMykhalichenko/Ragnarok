@@ -1,6 +1,6 @@
 <?php
 
-use Core\Modules\Response;
+use Core\Modules\Http\Response;
 
 if (!function_exists('env')) {
 	function env($name, $default = null) {
