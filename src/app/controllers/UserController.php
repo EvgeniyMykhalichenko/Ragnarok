@@ -3,16 +3,16 @@
 
 namespace App\Controllers;
 
+
 use App\Models\Book;
-use App\Preparations\BookPreparation;
 use Core\Modules\Http\Request;
 
-class BookController {
+class UserController {
 
 	public function index(Request $request)
 	{
 		$book = new Book();
-		return response()->json(BookPreparation::many($book->getBooks()));
+		return response()->json($book->getBooks());
 	}
 
 	public function show($bookUUID)

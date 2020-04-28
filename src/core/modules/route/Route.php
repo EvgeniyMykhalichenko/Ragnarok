@@ -2,7 +2,7 @@
 
 namespace Core\Modules\Route;
 
-use Core\Modules\Request;
+use Core\Modules\Http\Request;
 
 class Route
 {

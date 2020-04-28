@@ -10,6 +10,7 @@ class Model extends Sparrow {
 
 	public function __construct()
 	{
+		$this->stats_enabled = true;
 		$this->setDb([
 			'type' => 'pdomysql',
 			'hostname' => 'mysql',

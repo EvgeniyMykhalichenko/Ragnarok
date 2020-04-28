@@ -1,6 +1,6 @@
 <?php
 
-namespace Core\Modules;
+namespace Core\Modules\Http;
 
 
 class Request {

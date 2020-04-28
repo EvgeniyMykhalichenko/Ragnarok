@@ -27,7 +27,7 @@ class Response {
 
 		return json_encode(array(
 			'status' => $code < 300 ? self::STATUS_SUCCESS : self::STATUS_ERROR,
-			'data' => $message
+			'data' => $message,
 		));
 	}
 }

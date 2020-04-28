@@ -1,7 +1,7 @@
 <?php
 /*
  |--------------------------------------------------------------------------
- | Api REST methods example
+ | User REST methods example
  |--------------------------------------------------------------------------
  |
  | Here you may specify the default timezone for your application, which
@@ -15,18 +15,18 @@ use Core\Modules\Route\Route;
 $router = new Route();
 
 //Get all books
-$router->get('books', 'BookController@index');
+$router->get('users', 'UserController@index');
 
 //Show book by uuid
-$router->get('books/:uuid', 'BookController@show');
+$router->get('users/:id', 'UserController@show');
 
 //Create new book
-$router->post('books', 'BookController@create');
+$router->post('users', 'UserController@create');
 
 //Update book
-$router->put('books/:uuid', 'BookController@update');
+$router->put('users/:id', 'UserController@update');
 
 //Delete book
-$router->delete('books/:uuid', 'BookController@delete');
+$router->delete('users/:id', 'UserController@delete');
 
 return $router;
