@@ -8,10 +8,10 @@ use Core\Modules\Http\Preparation;
 
 class BookPreparation extends Preparation {
 
-	protected function beautify() : array
+	protected function toBeautify(): array
 	{
 		return [
-			'name' => $this->name,
+			'name'  => $this->name,
 			'price' => $this->price,
 		];
 	}

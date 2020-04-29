@@ -16,7 +16,7 @@ class Preparation {
 	{
 		$obj = new static();
 		$obj->storage = $object;
-		return $obj->beautify();
+		return $obj->toBeautify();
 	}
 
 	public static function many(array  $collection) : array
@@ -26,13 +26,13 @@ class Preparation {
 		foreach ($collection as $item) {
 			$obj = new static();
 			$obj->storage = $item;
-			$data[] = $obj->beautify();
+			$data[] = $obj->toBeautify();
 		}
 
 		return $data;
 	}
 
-	protected function beautify() : array
+	protected function toBeautify() : array
 	{
 		return [];
 	}
