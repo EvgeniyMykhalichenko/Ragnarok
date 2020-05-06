@@ -25,7 +25,7 @@ class RouteStorage extends SplObjectStorage {
 
 		foreach ($routs as $route) {
 			$a = include_once ($dir . '/' . $route);
-			foreach ($a->collection as $route) {
+			foreach ($a->getCollection() as $route) {
 				self::attach($route);
 			}
 		}

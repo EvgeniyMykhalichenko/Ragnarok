@@ -12,31 +12,52 @@ class Request {
 
 	private array $storage;
 
-	private string $method;
+	private array $server;
 
 	public function __construct()
 	{
-		$this->storage = $this->cleanInput($_REQUEST);
+	   $this->storage =  $this->cleanInput($_REQUEST);
+//		if (!empty($_REQUEST) ) {
+//			$this->storage =  $this->cleanInput($_REQUEST);
+//		} else {
+//			$this->storage = $this->cleanInput(json_decode(file_get_contents("php://input"), true));
+//		}
+
+		$this->server = $_SERVER;
 	}
 
 	public function __get($name)
 	{
-		if (isset($this->storage[$name])) return $this->storage[$name];
+		return $this->storage[$name] ??= $this->storage[$name];
 	}
 
 	public function isMethod(string $method): bool
 	{
-		return $this->method === $method;
+		return $this->getMethod() === $method;
 	}
 
 	public function getMethod(): string
 	{
-		return $this->method;
+		return $this->server['REQUEST_METHOD'];
 	}
 
-	public function getUserAgent()
+	public function getURL(): string
 	{
-		return $_SERVER['HTTP_USER_AGENT'];
+		return $this->server['REQUEST_URI'];
+	}
+
+	public function getClearURL(): string
+	{
+		if (($pos = strpos($this->getURL(), '?')) !== false) {
+			return substr($this->getURL(), 0, $pos);
+		}
+
+		return $this->getURL();
+	}
+
+	public function getUserAgent(): string
+	{
+		return $this->server['HTTP_USER_AGENT'];
 	}
 
 	private function cleanInput($data)

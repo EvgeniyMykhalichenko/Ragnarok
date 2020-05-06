@@ -3,26 +3,32 @@
 
 namespace App\Controllers;
 
-use App\Models\Book;
-use App\Preparations\BookPreparation;
+use App\Database\Models\Book;
+use App\Preparations\Book\BookPreparation;
 use Core\Modules\Http\Request;
 
 class BookController {
 
-	public function index(Request $request)
+	private Book $book;
+
+	public function __construct()
 	{
-		$book = new Book();
-		return response()->json(BookPreparation::many($book->getBooks()));
+		$this->book = new Book();
 	}
 
-	public function show($bookUUID)
+	public function index(Request $request)
 	{
-		return response()->json(['status' => 'success']);
+		return response()->json(BookPreparation::many($this->book->getBooks()));
+	}
+
+	public function show($uuid, Request $request)
+	{
+		return response()->json(BookPreparation::one($this->book->getBookByID($uuid)));
 	}
 
 	public function create(Request $request)
 	{
-		return response()->json(['status' => 'success']);
+		return response()->json([$request->all()]);
 	}
 
 	public function update($bookUUID, Request $request)

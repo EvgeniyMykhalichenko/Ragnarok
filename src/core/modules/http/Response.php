@@ -9,7 +9,7 @@ class Response {
 	public const STATUS_SUCCESS = 'success';
 	public const STATUS_ERROR = 'error';
 
-	public function json($message = null, $code = 200)
+	public function json( $data = null, int $code = 200): string
 	{
 		header_remove();
 		http_response_code($code);
@@ -23,11 +23,11 @@ class Response {
 			500 => '500 Internal Server Error'
 		];
 
-		header('Status: '. $status[$code]);
+		header('Status: ' . $status[$code]);
 
-		return json_encode(array(
+		return json_encode([
 			'status' => $code < 300 ? self::STATUS_SUCCESS : self::STATUS_ERROR,
-			'data' => $message,
-		));
+			'data'   => $data,
+		]);
 	}
 }

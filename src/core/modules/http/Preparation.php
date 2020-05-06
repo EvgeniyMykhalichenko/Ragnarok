@@ -12,18 +12,20 @@ class Preparation {
 		if (isset($this->storage[$name])) return $this->storage[$name];
 	}
 
-	public static function one(array $object) : array
+	public static function one(array $object = []): array
 	{
 		$obj = new static();
 		$obj->storage = $object;
+
 		return $obj->toBeautify();
 	}
 
-	public static function many(array  $collection) : array
+	public static function many(array $collection = []): array
 	{
 		$data = [];
 
-		foreach ($collection as $item) {
+		foreach ($collection as $item)
+		{
 			$obj = new static();
 			$obj->storage = $item;
 			$data[] = $obj->toBeautify();
@@ -32,7 +34,7 @@ class Preparation {
 		return $data;
 	}
 
-	protected function toBeautify() : array
+	protected function toBeautify(): array
 	{
 		return [];
 	}

@@ -3,61 +3,71 @@
 namespace Core\Modules\Route;
 
 use Core\Modules\Http\Request;
+use Core\Exceptions\RouterException;
 
 class Route
 {
-	public array $collection = [];
-
-	private string $actionDelimiter = '@';
+	private array $collection = [];
 
 	private string $url;
+
+	private string $method;
 
 	private array $parameters = [];
 
 	private string $action;
 
-	public function get(string $resource, string $action): Route
+	private $parametersByName;
+
+	private $filters;
+
+	private string $actionDelimiter = '@';
+
+	/**
+	 * @param string $url
+	 * @param string $action
+	 * @param string $method
+	 *
+	 * @throws \Exception
+	 */
+	private function add(string $url, $action, string $method)
 	{
+		if (!is_callable($action) && !strpos($action, $this->actionDelimiter)) {
+			throw new RouterException("Invalid route action");
+		}
+
 		$route = new self();
-		$route->url = trim($resource, '/');
-		$route->action = $action;
+		$route->setUrl($url);
+		$route->setAction($action);
+		$route->method = $method;
 
 		$this->collection[] = $route;
-
-		return $this;
 	}
 
-	public function post(string $resource, string $action): Route
+	/**
+	 * Get routes collections
+	 * @return array
+	 */
+	public function getCollection(): array
 	{
-		$route = new self();
-		$route->url = trim($resource, '/');
-		$route->action = $action;
-
-		$this->collection[] = $route;
-
-		return $this;
+		return $this->collection;
 	}
 
-	public function put(string $resource, string $action): Route
+	private function setUrl($url): void
 	{
-		$route = new self();
-		$route->url = trim($resource, '/');
-		$route->action = $action;
+		$url = (string)$url;
 
-		$this->collection[] = $route;
+		// make sure that the URL is suffixed with a forward slash
+		if (substr($url, -1) !== '/') {
+			$url .= '/';
+		}
 
-		return $this;
+		$this->url = $url;
 	}
 
-	public function delete(string $resource, string $action): Route
+	private function setAction(string $action):void
 	{
-		$route = new self();
-		$route->url = trim($resource, '/');
-		$route->action = $action;
-
-		$this->collection[] = $route;
-
-		return $this;
+		$this->action = $action;
 	}
 
 	public function getUrl(): string
@@ -65,20 +75,85 @@ class Route
 		return $this->url;
 	}
 
+	public function getMethod(): string
+	{
+		return $this->method;
+	}
+
+	/**
+	 * @param string $url
+	 * @param string $action
+	 *
+	 * @return $this
+	 * @throws \Exception
+	 */
+	public function get(string $url, string $action)
+	{
+		$this->add($url, $action, Request::GET);
+
+		return $this;
+	}
+
+	/**
+	 * @param string $url
+	 * @param string $action
+	 *
+	 * @return $this
+	 * @throws \Exception
+	 */
+	public function post(string $url, string $action)
+	{
+		$this->add($url, $action, Request::POST);
+
+		return $this;
+	}
+
+	/**
+	 * @param string $url
+	 * @param string $action
+	 *
+	 * @return $this
+	 * @throws \Exception
+	 */
+	public function put(string $url, string $action)
+	{
+		$this->add($url, $action, Request::PUT);
+
+		return $this;
+	}
+
+	/**
+	 * @param string $url
+	 * @param string $action
+	 *
+	 * @return $this
+	 * @throws \Exception
+	 */
+	public function delete(string $url, string $action)
+	{
+		$this->add($url, $action, Request::DELETE);
+
+		return $this;
+	}
+
+	public function setFilters(array $filters, $parametersByName = false)
+	{
+		$this->filters          = $filters;
+		$this->parametersByName = $parametersByName;
+	}
+
 	public function getRegex()
 	{
-		return preg_replace_callback(
-			'/(:\w+)/',
-			function ($matches) {
-				return '[a-z0-9]+';
-			},
-			$this->url
-		);
+		return preg_replace_callback('/(:\w+)/', [&$this, 'substituteFilter'], $this->url);
 	}
 
 	private function substituteFilter($matches)
 	{
-		return '[a-z0-9]+';
+		if (isset($matches[1], $this->filters[$matches[1]])) {
+			return $this->filters[$matches[1]];
+		}
+
+		return '([\w\-%]+)';
 	}
 
 	public function getParameters()
@@ -86,20 +161,30 @@ class Route
 		return $this->parameters;
 	}
 
-	public function setParameters(array $parameters)
+	public function setParameters(array $parameters = []): void
 	{
 		$this->parameters = $parameters;
 	}
 
+	/**
+	 * @return mixed
+	 * @throws RouterException
+	 */
 	public function dispatch()
 	{
-		list($controller, $method) = explode($this->actionDelimiter, $this->action);
+		list($class, $method) = explode($this->actionDelimiter, $this->action);
 
-		$controllerPath = "App\Controllers\\" . $controller;
+		$controllerPath = "App\Controllers\\" . ucfirst($class);
 
-		$instance = new $controllerPath;
+		if (!class_exists($controllerPath)) {
+			throw new RouterException("Controller {$controllerPath} not exist");
+		}
 
-		return $instance->$method(new Request());
+		if (!method_exists($controllerPath, $method)) {
+			throw new RouterException("Method {$method} not fount in {$controllerPath}");
+		}
+
+		return call_user_func_array([new $controllerPath(), $method], $this->parameters);
 	}
 
 }

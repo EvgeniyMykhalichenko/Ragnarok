@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Preparations;
+namespace App\Preparations\Book;
 
 
 use Core\Modules\Http\Preparation;

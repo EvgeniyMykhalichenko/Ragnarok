@@ -14,8 +14,4 @@
 use Core\Modules\Route\Route;
 
 return (new Route())
-	->get('books', 'BookController@index')
-	->get('books/:id', 'BookController@show')
-	->post('books', 'BookController@create')
-	->put('books/:id', 'BookController@update')
-	->delete('books/:id', 'BookController@delete');
+	->get('', 'BookController@index');

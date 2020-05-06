@@ -1,0 +1,50 @@
+#!/usr/bin/env php
+<?php
+
+require '../core/modules/Autoload.php';
+use Core\Modules\Autoload;
+
+Autoload::loadFromConsole();
+
+use  Core\Modules\Console\Console;
+
+$m = new Core\Modules\Database\Migration();
+
+if(count($argv) == 1){
+	$m->printCommands();
+};
+
+if (empty($argv[1])) {
+	exit();
+}
+
+switch ($argv[1]) {
+	case 'run':
+		if(isset($argv[2])){
+			$m->UpOneMigration($argv[2]);
+		}
+		else
+			$m->UpAllMigration();
+		break;
+
+	case 'down':
+		if(isset($argv[2])){
+			$m->DownOneMigration($argv[2]);
+		}
+		else
+			$m->DownAllMigration();
+		break;
+
+	case 'list':
+		$m->printListMigration();
+		break;
+
+	case 'create':
+		$name = isset($argv[2]) ? $argv[2] : "";
+		$m->createMigration($name);
+		break;
+
+	default:
+		echo "Не правильный параметр\n\r";
+		break;
+}

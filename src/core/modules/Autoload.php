@@ -17,6 +17,16 @@ class Autoload
 		spl_autoload_register('self::findClass');
 	}
 
+	public static function loadFromConsole()
+	{
+		spl_autoload_register('self::findConsoleClass');
+	}
+
+	private static function findConsoleClass($className) {
+		$fileName = ucwords("../" . str_replace("\\", '/', $className) . ".php");
+		self::include($fileName, $className);
+	}
+
 	/**
 	 * Find classes by namespace
 	 * @param $className
@@ -25,7 +35,11 @@ class Autoload
 	private static function findClass($className)
 	{
 		$fileName = ucwords("../../" . str_replace("\\", '/', $className) . ".php");
+		self::include($fileName, $className);
+	}
 
+	private static function include($fileName, $className)
+	{
 		try{
 			if (file_exists($fileName)) {
 				require($fileName);

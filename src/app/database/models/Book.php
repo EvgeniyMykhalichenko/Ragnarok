@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Models;
+namespace App\Database\Models;
 
 
 use Core\Modules\Database\Model;
@@ -33,6 +33,11 @@ class Book extends Model {
 		return $this
 			->select('*')
 			->many();
+	}
+
+	public function getBookByID(string $id): ?array
+	{
+		return $this->where('id', $id)->select()->one();
 	}
 
 	/**
