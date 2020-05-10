@@ -3,9 +3,9 @@
 
 namespace Core\Modules\Route;
 
-use Core\Modules\ModuleExtension;
+use Core\Modules\Extension\Extension;
 
-class RouterModuleExtension extends ModuleExtension {
+class RouterExtension extends Extension {
 
 	public function register(): Router
 	{

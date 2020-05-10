@@ -1,12 +1,19 @@
 <?php
 
 
-namespace Core;
+namespace Core\Modules\Di;
 
 
+/**
+ * Class DI
+ * Dependency injection
+ *
+ * @package Core
+ * @author  Krepysh <mykhalichenkoEvgeniy@gmail.com>
+ */
 class DI {
 
-	private array $modules;
+	private array $modules = [];
 
 	public function register(string $moduleName, object $obj): void
 	{
@@ -22,7 +29,7 @@ class DI {
 		return $this->modules[$moduleName];
 	}
 
-	public function getModules()
+	public function getModules(): array
 	{
 		return $this->modules;
 	}

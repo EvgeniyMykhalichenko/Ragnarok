@@ -3,7 +3,9 @@
 
 namespace Core;
 
-use Core\Modules\Route\RouterModuleExtension;
+use Core\Modules\Config\ConfigExtension;
+use Core\Modules\Route\RouterExtension;
+use Core\Modules\Di\DI;
 
 class Application extends DI {
 
@@ -23,13 +25,6 @@ class Application extends DI {
 		$this->registerBaseModulesExtension();
 	}
 
-	public function setBasePath(string $basePath): Application
-	{
-		$this->basePath = rtrim($basePath, '\/');
-
-		return $this;
-	}
-
 	public function path($path = '')
 	{
 		$appPath = $this->appPath ?: $this->basePath.DIRECTORY_SEPARATOR.'app';
@@ -37,14 +32,56 @@ class Application extends DI {
 		return $appPath.($path ? DIRECTORY_SEPARATOR.$path : $path);
 	}
 
-	public function registerBaseModulesExtension()
-	{
-		$this->register('router', new RouterModuleExtension($this));
-	}
-
 	public function basePath(string $path = ''): string
 	{
 		return $this->basePath.($path ? DIRECTORY_SEPARATOR.$path : $path);
+	}
+
+	public function setBasePath(string $basePath): Application
+	{
+		$this->basePath = rtrim($basePath, '\/');
+
+		return $this;
+	}
+
+	public function configPath(string $path = '')
+	{
+		return $this->basePath . DIRECTORY_SEPARATOR . 'configs' . ($path ? DIRECTORY_SEPARATOR.$path : $path);
+	}
+
+	public function databasePath(string $path = '')
+	{
+		return $this->basePath . DIRECTORY_SEPARATOR . 'database' . ($path ? DIRECTORY_SEPARATOR.$path : $path);
+	}
+
+	public function routePath(string $path = '')
+	{
+		return $this->basePath . DIRECTORY_SEPARATOR . 'routes' . ($path ? DIRECTORY_SEPARATOR.$path : $path);
+	}
+
+	public function registerBaseModulesExtension()
+	{
+		$this->register('router', new RouterExtension($this));
+		$this->register('config', new ConfigExtension($this));
+	}
+
+
+	public function loadFiles(string $path): array
+	{
+		if (!is_dir($path)) {
+			return [];
+		}
+
+		$files = array_diff(scandir($path), ['.', '..']);
+
+		$collection = [];
+
+		foreach ($files as $file) {
+			$loaded = include_once ($path . DIRECTORY_SEPARATOR . $file);
+			$collection = array_merge($collection, $loaded);
+		}
+
+		return $collection;
 	}
 
 	public function run()
