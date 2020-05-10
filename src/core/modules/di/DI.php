@@ -15,7 +15,7 @@ class DI {
 
 	private array $modules = [];
 
-	public function register(string $moduleName, object $obj): void
+	public function register(string $moduleName, $obj): void
 	{
 		$this->modules[$moduleName] = $obj;
 	}

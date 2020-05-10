@@ -14,8 +14,13 @@ class Config {
 		$this->configs = $app->loadFiles($app->configPath());
 	}
 
-	public function __get($name)
+	public function __get($name): ?string
 	{
 		return $this->configs[$name] ??= $this->configs[$name];
+	}
+
+	public function all(): array
+	{
+		return $this->configs;
 	}
 }

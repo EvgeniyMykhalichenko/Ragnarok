@@ -9,9 +9,9 @@ use Core\Modules\Di\DI;
 
 class Application extends DI {
 
-	public string $basePath;
+	protected string $basePath;
 
-	public string $appPath;
+	protected string $appPath;
 
 	public final static function version()
 	{
@@ -27,14 +27,14 @@ class Application extends DI {
 
 	public function path($path = '')
 	{
-		$appPath = $this->appPath ?: $this->basePath.DIRECTORY_SEPARATOR.'app';
+		$appPath = $this->appPath ?: $this->basePath . DIRECTORY_SEPARATOR . 'app';
 
-		return $appPath.($path ? DIRECTORY_SEPARATOR.$path : $path);
+		return $appPath . ($path ? DIRECTORY_SEPARATOR . $path : $path);
 	}
 
 	public function basePath(string $path = ''): string
 	{
-		return $this->basePath.($path ? DIRECTORY_SEPARATOR.$path : $path);
+		return $this->basePath . ($path ? DIRECTORY_SEPARATOR . $path : $path);
 	}
 
 	public function setBasePath(string $basePath): Application
@@ -46,17 +46,17 @@ class Application extends DI {
 
 	public function configPath(string $path = '')
 	{
-		return $this->basePath . DIRECTORY_SEPARATOR . 'configs' . ($path ? DIRECTORY_SEPARATOR.$path : $path);
+		return $this->basePath . DIRECTORY_SEPARATOR . 'configs' . ($path ? DIRECTORY_SEPARATOR . $path : $path);
 	}
 
 	public function databasePath(string $path = '')
 	{
-		return $this->basePath . DIRECTORY_SEPARATOR . 'database' . ($path ? DIRECTORY_SEPARATOR.$path : $path);
+		return $this->basePath . DIRECTORY_SEPARATOR . 'database' . ($path ? DIRECTORY_SEPARATOR . $path : $path);
 	}
 
 	public function routePath(string $path = '')
 	{
-		return $this->basePath . DIRECTORY_SEPARATOR . 'routes' . ($path ? DIRECTORY_SEPARATOR.$path : $path);
+		return $this->basePath . DIRECTORY_SEPARATOR . 'routes' . ($path ? DIRECTORY_SEPARATOR . $path : $path);
 	}
 
 	public function registerBaseModulesExtension()
@@ -68,16 +68,22 @@ class Application extends DI {
 
 	public function loadFiles(string $path): array
 	{
-		if (!is_dir($path)) {
+		if (!is_dir($path))
+		{
 			return [];
 		}
 
 		$files = array_diff(scandir($path), ['.', '..']);
 
+		if (empty($files)) {
+			return [];
+		}
+
 		$collection = [];
 
-		foreach ($files as $file) {
-			$loaded = include_once ($path . DIRECTORY_SEPARATOR . $file);
+		foreach ($files as $file)
+		{
+			$loaded = include_once($path . DIRECTORY_SEPARATOR . $file);
 			$collection = array_merge($collection, $loaded);
 		}
 
@@ -86,7 +92,13 @@ class Application extends DI {
 
 	public function run()
 	{
-		foreach ($this->getModules() as $moduleName => $module) {
+		foreach ($this->getModules() as $moduleName => $module)
+		{
+			if (!method_exists($module, 'register'))
+			{
+				throw new \Exception("Method register not exist in {$moduleName} extension");
+			}
+
 			$module->register();
 		}
 	}
