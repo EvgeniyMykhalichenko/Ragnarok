@@ -1,9 +1,6 @@
 <?php
 
-require '../../core/modules/Autoload.php';
-use Core\Modules\Autoload;
+require dirname(__DIR__) . '/../core/modules/Autoload.php';
 
-Autoload::load();
-
-use App\Bootstrap;
-new Bootstrap();
+$app = require_once dirname(__DIR__) . '/bootstrap/app.php';
+$app->run();

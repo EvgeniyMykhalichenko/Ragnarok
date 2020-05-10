@@ -3,15 +3,17 @@
 
 namespace Core\Modules\Route;
 
+use Core\Application;
 use SplObjectStorage;
 
 class RouteStorage extends SplObjectStorage {
 
 	private $collection;
 
-	public function __construct()
+	public function __construct(Application $app)
 	{
-		$dir = './../../app/routes';
+
+		$dir = $app->basePath() . '/routes';
 
 		if (!is_dir($dir)) {
 			return [];

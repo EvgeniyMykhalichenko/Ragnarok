@@ -57,3 +57,5 @@ class Autoload
 	}
 
 }
+
+return Autoload::load();

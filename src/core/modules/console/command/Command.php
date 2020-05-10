@@ -5,10 +5,11 @@ namespace Core\Modules\Console\Command;
 
 use Core\Modules\Console\Command\Interfaces\CommandInterface;
 
-abstract class Command implements CommandInterface {
+class Command extends AbstractCommand {
 
-	public string $commandAction = '';
-
-	public string $commandDescription = '';
+	public function execute(): void
+	{
+		// TODO: Implement execute() method.
+	}
 
 }
