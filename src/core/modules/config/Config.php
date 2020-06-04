@@ -19,6 +19,8 @@ class Config {
 		return $this->configs[$name] ??= $this->configs[$name];
 	}
 
+	public function register() {}
+
 	public function all(): array
 	{
 		return $this->configs;

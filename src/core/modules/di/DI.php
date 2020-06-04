@@ -4,6 +4,8 @@
 namespace Core\Modules\Di;
 
 
+use Core\Modules\Config\ConfigExtension;
+
 /**
  * Class DI
  * Dependency injection
@@ -15,12 +17,17 @@ class DI {
 
 	private array $modules = [];
 
-	public function register(string $moduleName, $obj): void
+	protected function register(string $moduleName, callable $callback): void
 	{
-		$this->modules[$moduleName] = $obj;
+		$this->modules[$moduleName] = $callback();
 	}
 
-	public function getModule(string $moduleName): object
+	public function __get(string $moduleName)
+	{
+		return $this->modules[$moduleName] ??= $this->modules[$moduleName];
+	}
+
+	protected function getModule(string $moduleName)
 	{
 		if(!array_key_exists($moduleName, $this->modules)) {
 			throw new \Exception('Not found');
@@ -29,7 +36,7 @@ class DI {
 		return $this->modules[$moduleName];
 	}
 
-	public function getModules(): array
+	protected function getModules(): array
 	{
 		return $this->modules;
 	}

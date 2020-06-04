@@ -25,7 +25,7 @@ class Application extends DI {
 		$this->registerBaseModulesExtension();
 	}
 
-	public function path($path = '')
+	public function path(string $path = ''): string
 	{
 		$appPath = $this->appPath ?: $this->basePath . DIRECTORY_SEPARATOR . 'app';
 
@@ -44,27 +44,20 @@ class Application extends DI {
 		return $this;
 	}
 
-	public function configPath(string $path = '')
+	public function configPath(string $path = ''): string
 	{
 		return $this->basePath . DIRECTORY_SEPARATOR . 'configs' . ($path ? DIRECTORY_SEPARATOR . $path : $path);
 	}
 
-	public function databasePath(string $path = '')
+	public function databasePath(string $path = ''): string
 	{
 		return $this->basePath . DIRECTORY_SEPARATOR . 'database' . ($path ? DIRECTORY_SEPARATOR . $path : $path);
 	}
 
-	public function routePath(string $path = '')
+	public function routePath(string $path = ''): string
 	{
 		return $this->basePath . DIRECTORY_SEPARATOR . 'routes' . ($path ? DIRECTORY_SEPARATOR . $path : $path);
 	}
-
-	public function registerBaseModulesExtension()
-	{
-		$this->register('router', new RouterExtension($this));
-		$this->register('config', new ConfigExtension($this));
-	}
-
 
 	public function loadFiles(string $path): array
 	{
@@ -90,7 +83,19 @@ class Application extends DI {
 		return $collection;
 	}
 
-	public function run()
+	private function registerBaseModulesExtension(): void
+	{
+		$this->register('router', function () {
+			return new RouterExtension($this);
+		});
+
+		$this->register('config', function () {
+			return new Modules\Config\Config($this);
+		});
+
+	}
+
+	public function run(): void
 	{
 		foreach ($this->getModules() as $moduleName => $module)
 		{

@@ -12,10 +12,7 @@ class RouteStorage extends SplObjectStorage {
 
 	public function __construct(Application $app)
 	{
-
-
-
-		$dir = $app->basePath() . '/routes';
+		$dir = $app->routePath();
 
 		if (!is_dir($dir)) {
 			return [];

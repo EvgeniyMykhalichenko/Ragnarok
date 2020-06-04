@@ -9,7 +9,7 @@ class RouterExtension extends Extension {
 
 	public function register(): Router
 	{
-		return new Router(new RouteStorage());
+		return new Router(new RouteStorage($this->app));
 	}
 
 }
